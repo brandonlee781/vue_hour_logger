@@ -5,6 +5,8 @@
     "module": "es2015",
     "moduleResolution": "node",
     "sourceMap": true,
-    "allowSyntheticDefaultImports": true
-  }
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true
+  },
+  "experimentalDecorators": true
 }

@@ -35,7 +35,8 @@ var webpackConfig = merge(baseWebpackConfig, {
       compress: {
         warnings: false
       },
-      sourceMap: true
+      sourceMap: true,
+      uglifyOptions: { ecma: 8 }
     }),
     // extract css into its own file
     new ExtractTextPlugin({
