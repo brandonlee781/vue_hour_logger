@@ -19,7 +19,7 @@ export default class Login extends Vue {
   constructor() {
     super();
     this.api = axios.create({
-      baseURL: 'https://www.branlee.me',
+      baseURL: 'https://www.branlee.me/api/v1',
     })
   }
 
@@ -27,7 +27,7 @@ export default class Login extends Vue {
     const query = new URLSearchParams(window.location.search)
     const accessCode = query.get('accessCode');
     if (accessCode) {
-      this.api.get('login', {
+      this.api.get('/login', {
         params: {
           accessCode: accessCode
         }
@@ -37,10 +37,10 @@ export default class Login extends Vue {
         this.text = 'You are now logged in.';
       })
       .catch(err => {
-        window.location.href = 'http://localhost:8080/login';
+        window.location.href = 'https://www.branlee.me/login';
       })
     } else {
-      this.api.get('access')
+      this.api.get('/access')
         .then(res => {
           if (res.status === 200) {
             this.text = 'Check your email.';
