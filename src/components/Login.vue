@@ -1,7 +1,14 @@
 <template>
-  <!-- <b-button variant="primary">Login</b-button> -->
-  <div>
-    {{ text }}
+  <div class="login-wrapper">
+    <b-card title="Login"
+          tag="article"
+          style="max-width: 20rem;"
+          class="login-card">
+      <p class="card-text">
+        {{ text }}
+      </p>
+      <b-button variant="primary" @click="login()">Login</b-button>
+    </b-card>
   </div>
 </template>
 
@@ -24,8 +31,7 @@ export default class Login extends Vue {
   }
 
   mounted() {
-    const query = new URLSearchParams(window.location.search)
-    const accessCode = query.get('accessCode');
+    const accessCode = window.location.href.split('accessCode=')[1];
     if (accessCode) {
       this.api.get('/login', {
         params: {
@@ -37,23 +43,30 @@ export default class Login extends Vue {
         this.text = 'You are now logged in.';
       })
       .catch(err => {
-        window.location.href = 'https://www.branlee.me/login';
+        window.location.href = 'https://www.branlee.me/work/#/login';
       })
-    } else {
-      this.api.get('/access')
-        .then(res => {
-          if (res.status === 200) {
-            this.text = 'Check your email.';
-          }
-        })
-        .catch(err => {
-          console.error(err);
-        })
-    }
+    } 
+  }
+  login() {
+    this.api.get('/access')
+      .then(res => {
+        if (res.status === 200) {
+          this.text = 'Check your email.';
+        }
+      })
+      .catch(err => {
+        console.error(err);
+      })
   }
 }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+  .login-wrapper {
+    height: 100%;
+    width: 100%;
+    .login-card {
+      margin: 0 auto;
+    }
+  }
 </style>
