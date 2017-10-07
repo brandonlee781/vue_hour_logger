@@ -1,10 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '@/components/Home/Home.vue'
-import Hours from '@/components/Hours/Hours.vue';
-import Invoice from '@/components/Invoice/Invoice.vue';
-import Login from '@/components/Login.vue';
 import * as Cookies from 'js-cookie';
+
+import Home from '@/components/Home/Home.vue'
+import HourSearch from '@/components/Hours/HourSearch.vue';
+import Invoice from '@/components/Invoice/Invoice.vue';
+import Project from '@/components/Project/Project.vue';
+import Login from '@/components/Login.vue';
 
 Vue.use(Router)
 
@@ -24,9 +26,9 @@ export default new Router({
       }
     },
     {
-      path: '/hours',
-      name: 'Hours',
-      component: Hours,
+      path: '/invoice',
+      name: 'Invoice',
+      component: Invoice,
       beforeEnter(to, from, next) {
         const authCookie = Cookies.get('hourLoggerAuth');
         if (!authCookie) {
@@ -37,8 +39,8 @@ export default new Router({
       }
     },
     {
-      path: '/invoice',
-      name: 'Invoice',
+      path: '/project',
+      name: 'Project',
       component: Invoice,
       beforeEnter(to, from, next) {
         const authCookie = Cookies.get('hourLoggerAuth');
