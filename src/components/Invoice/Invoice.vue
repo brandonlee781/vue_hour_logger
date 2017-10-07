@@ -97,7 +97,14 @@ export default class Invoice extends Vue {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+  $light-border: 1px solid rgba(0,0,0,0.1);
+  @mixin flex-row-between() {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+  }
+
   .invoice {
     height: 100%;
     width: 100%;
@@ -144,20 +151,16 @@ export default class Invoice extends Vue {
   }
   .customer,
   .number {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
+    @include flex-row-between();
     padding: 6px 8px;
     font-weight: bold;
-    border: 1px solid rgba(0,0,0,0.1);
+    border: $light-border;
   }
   .customer {
     flex-flow: column nowrap;
   }
   .customer div {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
+    @include flex-row-between();
   }
   .customer span {
     text-align: left;
@@ -172,26 +175,28 @@ export default class Invoice extends Vue {
     text-align: left;
     margin-left: 30px;
   }
-  .invoice-body table {
+  table {
     width: 100%;
     margin: 30px 24px;
+    thead {
+      background: #999;
+      color: #fff;
+      font-weight: bold;
+      tr th {
+        padding: 0 8px;
+        border-right: 1px solid #fff;
+      }
+    }
+    tbody {
+      tr, tr td {
+        border: $light-border;
+      }
+      tr td {
+        padding: 6px 8px;
+      }
+    }
   }
-  table thead {
-    background: #999;
-    color: #fff;
-    font-weight: bold;
-  }
-  table thead tr th {
-    padding: 0 8px;
-    border-right: 1px solid #fff;
-  }
-  table tbody tr,
-  table tbody tr td {
-    border: 1px solid rgba(0,0,0,0.1);
-  }
-  table tbody tr td {
-    padding: 6px 8px;
-  }
+
   .project-name {
     text-align: left;
   }
@@ -204,24 +209,22 @@ export default class Invoice extends Vue {
   .totals {
     display: flex;
     flex-flow: column nowrap;
-    width: 30%;
     align-self: flex-end;
+    width: 30%;
   }
   .subtotal,
   .tax,
   .total {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
+    @include flex-row-between();
     font-weight: bold;
   }
   .subtotal {
     padding: 16px 4px;
-    border-bottom: 1px solid rgba(0,0,0,0.1);
+    border-bottom: $light-border;
   }
   .tax {
     padding: 6px 4px;
-    border-bottom: 1px solid rgba(0,0,0,0.3);
+    border-bottom: $light-border;
   }
   .total {
     padding: 6px 4px;

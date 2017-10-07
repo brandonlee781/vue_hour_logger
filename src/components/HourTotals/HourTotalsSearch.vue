@@ -1,20 +1,59 @@
 <template>
-  <div class="hours-wrapper">
-    <div class="select-date-form">
-      <b-form-group label="Get entries from: " label-for="fromDate">
-        <b-form-input id="fromDate" type="date" v-model="fromDate"></b-form-input>
-      </b-form-group>
-      <b-form-group label="Get entries to: " label-for="toDate">
-        <b-form-input id="toDate" type="date" v-model="toDate"></b-form-input>
-      </b-form-group>
-      <b-button class="get-button" variant="success" @click="getEntries()">Get Entries</b-button>
-    </div>
-    <project-hours v-for="(entries, key) in projects" :key="key" :project="key" :entries="entries"></project-hours>
-    <div class="buttons">
-      <b-button class="csv-button" v-if="logs.length > 0" @click="downloadCSV()" variant="primary">Download CSV</b-button>
-      <b-button class="pdf-button" v-if="logs.length > 0" @click="downloadPDF()" variant="primary">Create Invoice</b-button>
-    </div>
-  </div>
+  <v-layout column nowrap class="hours-wrapper">
+    <v-layout row nowrap>
+      <v-flex>
+        <v-menu
+          class="date-wrapper"
+          lazy
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+          :nudge-left="40"
+          max-width="290px">
+          <v-text-field
+            slot="activator"
+            label="Select Date From"
+            v-model="fromDate"
+            prepend-icon="event"
+            readonly
+          ></v-text-field>
+          <v-date-picker v-model="fromDate" autosave no-title scrollable></v-date-picker>
+        </v-menu>
+      </v-flex>
+      <v-flex>
+        <v-menu
+          class="date-wrapper"
+          lazy
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+          :nudge-left="40"
+          max-width="290px">
+          <v-text-field
+            slot="activator"
+            label="Select Date To"
+            v-model="toDate"
+            prepend-icon="event"
+            readonly
+          ></v-text-field>
+          <v-date-picker v-model="toDate" no-title scrollable autosave></v-date-picker>
+        </v-menu>
+      </v-flex>
+      <!-- <v-flex> -->
+        <v-btn class="get-button" color="primary" @click="getEntries()">Get Project Totals</v-btn>
+      <!-- </v-flex> -->
+    </v-layout>
+
+    <v-layout row wrap>
+      <project-hours v-for="(entries, key) in projects" :key="key" :project="key" :entries="entries"></project-hours>
+    </v-layout>
+    
+    <v-layout row nowrap justify-end align-end class="buttons" v-if="logs.length > 0">
+      <v-btn flat v-if="logs.length > 0" class="clear-button" color="secondary" @click="clearEntries()">Clear Entries</v-btn>
+      <v-btn outline color="primary" class="csv-button" @click="downloadCSV()">Download CSV</v-btn>
+      <v-btn color="primary" class="pdf-button" @click="downloadPDF()">Create Invoice</v-btn>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script lang="ts">
@@ -28,7 +67,7 @@ import * as jsonexport from 'jsonexport/dist';
 import * as Cookies from 'js-cookie';
 
 @Component
-export default class Hours extends Vue {
+export default class HourTotalsSearch extends Vue {
   private api: AxiosInstance;
   public fromDate: Date | null = null;
   public toDate: Date | null = null;
@@ -57,6 +96,13 @@ export default class Hours extends Vue {
           console.error(err);
         })
     }
+  }
+
+  public clearEntries() {
+    this.fromDate = null;
+    this.toDate = null;
+    this.projects = [];
+    this.logs = [];
   }
 
   public downloadCSV() {
@@ -105,20 +151,14 @@ export default class Hours extends Vue {
 
 <style scoped>
   .hours-wrapper {
-    display: flex;
-    flex-flow: column nowrap;
-    margin-top: 40px;
-    justify-content: center;
-    align-self: center;
+    margin: 10px auto 20px auto;
+    width: 100%;
   }
   .log-nav-bar {
     margin-bottom: 40px;
   }
-  .select-date-form {
-    display: flex;
-    flex-flow: row;
-    justify-content: center;
-    align-items: flex-end;
+  .date-wrapper {
+    margin: 0 16px;
   }
   .get-button {
     max-height: 42px;
@@ -126,14 +166,7 @@ export default class Hours extends Vue {
     margin-left: 8px;
   }
   .buttons {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-    width: 60%;
+    width: 100%;
     margin: 10px auto 0 auto;
-  }
-  .pdf-button,
-  .csv-button {
-    width: 49%;
   }
 </style>
