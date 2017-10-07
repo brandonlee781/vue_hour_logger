@@ -1,14 +1,11 @@
 <template>
   <div class="login-wrapper">
-    <b-card title="Login"
-          tag="article"
-          style="max-width: 20rem;"
-          class="login-card">
+    <v-card class="login-card">
       <p class="card-text">
         {{ text }}
       </p>
-      <b-button variant="primary" @click="login()">Login</b-button>
-    </b-card>
+      <v-btn color="primary" @click="login()">Login</v-btn>
+    </v-card>
   </div>
 </template>
 
@@ -66,7 +63,13 @@ export default class Login extends Vue {
     height: 100%;
     width: 100%;
     .login-card {
-      margin: 0 auto;
+      display: flex;
+      flex-flow: column nowrap;
+      justify-content: center;
+      align-items: center;
+      width: 400px;
+      min-height: 300px;
+      margin: 40px auto;
     }
   }
 </style>

@@ -13,6 +13,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
+import Cookies from 'vue-cookie';
 
 @Component
 export default class App extends Vue {
@@ -21,14 +22,14 @@ export default class App extends Vue {
     this.expanded = !this.expanded;
   }
   mounted() {
-    this.$store.dispatch('log/LOAD_LOGS');
+    this.$store.dispatch('log/LOAD_LOG_LIST');
   }
 }
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Roboto', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -37,5 +38,6 @@ export default class App extends Vue {
 .app-body {
   display: flex;
   flex-flow: column nowrap;
+  margin-top: 42px;
 }
 </style>

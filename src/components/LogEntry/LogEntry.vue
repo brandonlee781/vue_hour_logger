@@ -40,6 +40,8 @@
             transition="scale-transition"
             offset-y
             :nudge-left="40"
+            @deactivated="editEntry()"
+            v-model="startMenu"
           >
             <v-text-field
               slot="activator"
@@ -50,14 +52,7 @@
               ref="startPicker"
               @focus="()=>$refs.startPicker.blur()"
             ></v-text-field>
-            <v-time-picker v-model="log.startTime" :allowed-minutes="[0,30,60]" format="24hr">
-              <template scope="{ save, cancel }">
-                <v-card-actions>
-                  <v-btn flat primary @click.native="cancel()">Cancel</v-btn>
-                  <v-btn flat primary @click.native="save()">Save</v-btn>
-                </v-card-actions>
-              </template>
-            </v-time-picker>
+            <v-time-picker v-model="log.startTime" autosave :allowed-minutes="[0,30,60]" format="24hr"></v-time-picker>
           </v-menu>
 
           <v-menu
@@ -81,10 +76,12 @@
             ></v-text-field>
             <v-time-picker v-model="log.endTime" autosave :allowed-minutes="[0,30,60]" format="24hr"></v-time-picker>
           </v-menu>
+
           <v-flex class="duration-wrapper" d-flex justify-center align-center>
             <v-icon>timelapse</v-icon>
             <span>{{ log.duration || tempDuration || 0 }}</span>
           </v-flex>
+
         </v-layout>
         <v-layout row nowrap justify-start align-start>
             <v-text-field class="project-input" type="text" v-model="log.project" @change="editEntry()" placeholder="Project" prepend-icon="assignment"></v-text-field>
@@ -106,6 +103,7 @@
   @Component
   export default class LogEntry extends Vue {
     @Prop() log: ILog;
+    @Prop() actions;
     dateMenu: boolean = false;
     startMenu: boolean = false;
     endMenu: boolean = false;
@@ -128,16 +126,20 @@
     }
 
     deleteEntry() {
-      this.$emit('deleteEntry', this.log._id);
+      this.actions.deleteLog(this.log);
     }
 
     addEntry() {
-      this.$emit('addEntry', this.log);
+      this.actions.addLog(this.log).then(() => {
+        this.$emit('newEntry');
+      });
     }
 
     editEntry() {
-      console.log('entry editEntry');
-      this.$emit('editEntry', this.log);
+      if (this.log._id) {
+        if (!this.log.duration) this.log.duration = this.tempDuration;
+        this.actions.editLog(this.log);
+      }
     }
 
     cancel() {

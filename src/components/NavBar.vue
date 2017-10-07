@@ -24,6 +24,10 @@ export default class NavBar extends Vue {
     width: 100%;
     border-bottom: 2px solid #ddd;
     background-color: #fff;
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 3;
   }
   .expand-button {
     align-self: flex-start;

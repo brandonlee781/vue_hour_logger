@@ -1,9 +1,9 @@
 <template>
   <v-layout class="entry-list" column nowrap justify-center>
-    <log-entry v-bind:hour="newEntry" v-on:addEntry="addEntry"></log-entry>
+    <log-entry :log="newEntry" :actions="actions" @newEntry="resetNewEntry()"></log-entry>
     <v-divider light inset></v-divider>
     <div v-for="(log, index) in logs" :key="log._id">
-      <log-entry :log="log" @deleteEntry="deleteEntry" @editEntry="editEntry"></log-entry>
+      <log-entry :log="log" :actions="actions"></log-entry>
       <v-divider light inset></v-divider>
     </div>
     <v-btn color="primary" full-width @click="getMoreEntries()">Load More</v-btn>
@@ -13,103 +13,40 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Component, Provide } from 'vue-property-decorator';
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 import * as moment from 'moment';
-import * as Cookies from 'js-cookie';
 import { ILog } from '../../interfaces/log';
-import { IAuthCookie } from '../../interfaces/authCookie';
-import axios, { AxiosInstance } from 'axios';
 
 import * as logs from '../../store/log';
 
-@Component({
-  computed: {
-    logs() {
-      return logs.readLogs(this.$store);
-    }
-  }
-})
+@Component
 export default class LogEntryList extends Vue {
   @Provide() newEntry: ILog = { date: moment().format('MM/DD/YYYY'), startTime: '', endTime: '', duration: 0, project: '', note: ''};
   currentSkip: number = 20;
-  api: AxiosInstance;
-  authCookie: IAuthCookie;
 
-  constructor() {
-    super();
-    this.authCookie = JSON.parse(Cookies.get('hourLoggerAuth'));
-    this.api = axios.create({
-      baseURL: 'https://www.branlee.me/api/v1',
-      headers: { 'Authorization': 'Basic ' + this.authCookie.code }
-    })
+  get logs() {
+    return this.$store.getters['log/getLogs'];
   }
 
-  // get logs(): logs.Log[] {
-  //   return logs.readLogs(this.$state);
-  // }
+  get logCount() {
+    return this.$store.getters['log/getLogCount'];
+  }
 
-  // addEntry(entry) {
-  //   this.api.post('/logs', entry)
-  //     .then(res => {
-  //       if (res.status === 200) {
-  //         const newHours = [res.data, ...this.hours];
-  //         this.hours = newHours;
+  get actions(): any {
+    return {
+      addLog: (log: ILog) => this.$store.dispatch('log/ADD_NEW_LOG', log),
+      deleteLog: (log: ILog) => this.$store.dispatch('log/DELETE_LOG', log),
+      editLog: (log: ILog) => this.$store.dispatch('log/EDIT_LOG', log),
+    }
+  }
 
-  //         this.newEntry = {_id: undefined, date: moment().format('MM/DD/YYYY'), startTime: '', endTime: '', duration: 0, project: '', note: ''};
-  //       }
-  //     })
-  //     .catch(err => {
-  //       console.error(err);
-  //     })
-  // }
+  resetNewEntry() {
+    this.newEntry = { date: moment().format('MM/DD/YYYY'), startTime: '', endTime: '', duration: 0, project: '', note: ''};
+  }
 
-  // deleteEntry(id) {
-  //   if(window.confirm('Are you sure you want to delete this entry?')) {
-  //     this.api.delete('/logs/'+id)
-  //       .then(res => {
-  //         if (res.status === 204) {
-  //           this.getEntries();
-  //         }
-  //       })
-  //       .catch(err => {
-  //         console.error(err);
-  //       })
-  //   }
-  // }
-
-  // editEntry(entry) {
-  //   console.log('entryList editEntry');
-  //   this.api.put('/logs/'+entry._id, entry)
-  //     .then(res => {
-  //       if (res.status = 200) {
-  //         console.log('this');
-  //         let index = this.hours.findIndex(val => val._id === entry._id);
-  //         var newHours = [ ...this.hours.slice(0,index), this.hours[index], ...this.hours.slice(index + 1) ];
-  //         this.hours = newHours;
-  //       }
-  //     })
-  // }
-
-  // getEntries() {
-  //   this.api.get('/logs')
-  //     .then(res => {
-  //       this.hours = res.data;
-  //     })
-  //     .catch(err => {
-  //       console.error(err);
-  //     })
-  // }
-
-  // getMoreEntries() {
-  //   this.api.get(`/logs?skip=${this.currentSkip}`)
-  //     .then(res => {
-  //       this.hours = this.hours.concat(res.data);
-  //       this.currentSkip += 20;
-  //     })
-  //     .catch(err => {
-  //       console.error(err);
-  //     });
-  // }
+  getMoreEntries() {
+    this.$store.dispatch('log/LOAD_MORE_LOGS', this.$store.getters['log/getLogCount']);
+  }
 }
 
 </script>
