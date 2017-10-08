@@ -9,8 +9,8 @@
           <span class="email">brandonlee781@gmail.com</span>
         </div>
       </div>
-      <div class="info">
-        <h1>INVOICE</h1>
+      <div class="info-wrapper">
+        <h3>INVOICE</h3>
         <div class="info-box">
           <div class="date">DATE: {{ today }}</div>
           <div class="number"><span>INVOICE #</span><span>{{ invoiceNumber }}</span></div>
@@ -25,7 +25,7 @@
       </div>
     </div>
     <div class="invoice-body">
-      <h3>Sterling Databases</h3>
+      <h4>Sterling Databases</h4>
       <table>
         <thead>
           <tr>
@@ -131,13 +131,13 @@ export default class Invoice extends Vue {
     font-size: 18px;
     font-weight: bold;
   }
-  .info {
+  .info-wrapper {
     display: flex;
     flex-flow: column nowrap;
     margin-top: 50px;
     width: 275px;
   }
-  .info h1 {
+  .info-wrapper h3 {
     text-align: right;
     font-weight: bold;
   }
@@ -171,7 +171,7 @@ export default class Invoice extends Vue {
     max-width: 80%;
     margin: 0 auto;
   }
-  .invoice-body h3 {
+  .invoice-body h4 {
     text-align: left;
     margin-left: 30px;
   }
