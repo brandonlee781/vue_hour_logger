@@ -23,7 +23,7 @@ import Vue from 'vue';
 import {Component, Prop} from 'vue-property-decorator';
 
 @Component
-export default class SideNavBar extends Vue {
+export default class TheSideNav extends Vue {
   @Prop() expanded: boolean;
   expandSideBar() {
     this.$emit('expandSideBar');
@@ -62,5 +62,10 @@ export default class SideNavBar extends Vue {
   }
   .expanded {
     width: 160px;
+  }
+  @media print {
+    .side-nav {
+      display: none;
+    }
   }
 </style>

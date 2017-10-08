@@ -101,7 +101,7 @@
   import * as moment from 'moment';
 
   @Component
-  export default class LogEntry extends Vue {
+  export default class LogEntryItem extends Vue {
     @Prop() log: ILog;
     @Prop() actions;
     dateMenu: boolean = false;

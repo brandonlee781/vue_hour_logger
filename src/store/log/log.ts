@@ -20,6 +20,7 @@ type LogContext = ActionContext<LogState, RootState>;
 export const log = {
   namespaced: true,
   state: {
+    isLoading: false,
     logs: []
   },
   getters: {
@@ -47,12 +48,17 @@ export const log = {
     [types.UPDATE](state, { log }) {
       const index = state.logs.findIndex(l => l._id === log._id);
       state.logs.splice(index, 1, log);
+    },
+    'TOGGLE_IS_LOADING'(state) {
+      state.isLoading = !state.isLoading;
     }
   },
   actions: {
     LOAD_LOG_LIST: async ({ commit }) => {
+      commit('TOGGLE_IS_LOADING');
       const res = await api.get('/', { headers: { 'Authorization': 'Basic ' + authCookie().code } });
       commit('SET_LIST', { logs: res.data });
+      commit('TOGGLE_IS_LOADING');
     },
     LOAD_MORE_LOGS: async ({ commit }, count) => {
       const res = await api.get('/', { params: { skip: count }, headers: { 'Authorization': 'Basic ' + authCookie().code } });

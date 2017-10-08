@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <div id="app">
-      <log-nav-bar v-if="this.$route.path !== '/invoice'" class="log-nav-bar" @expandSideBar="expandSideBar"></log-nav-bar>
+      <log-top-nav @expandSideBar="expandSideBar"></log-top-nav>
       <div class="app-body">
         <log-side-nav :expanded="expanded"></log-side-nav>
         <router-view></router-view>
@@ -15,7 +15,15 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import Cookies from 'vue-cookie';
 
-@Component
+import TheSideNav from './components/TheSideNav';
+import TheTopNav from './components/TheTopNav';
+
+@Component({
+  components: {
+    'log-side-nav': TheSideNav,
+    'log-top-nav': TheTopNav,
+  }
+})
 export default class App extends Vue {
   expanded = false;
   expandSideBar() {

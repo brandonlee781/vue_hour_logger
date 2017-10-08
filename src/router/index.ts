@@ -2,11 +2,10 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import * as Cookies from 'js-cookie';
 
-import Home from '@/components/Home/Home.vue'
-import HourSearch from '@/components/Hours/HourSearch.vue';
-import Invoice from '@/components/Invoice/Invoice.vue';
-import Project from '@/components/Project/Project.vue';
-import Login from '@/components/Login.vue';
+import Home from '@/views/Home.vue'
+import Invoice from '@/views/Invoice.vue';
+import Project from '@/views/Project.vue';
+import Login from '@/views/Login.vue';
 
 Vue.use(Router)
 

@@ -17,7 +17,7 @@ import Component from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 
 @Component
-export default class HourTotalsCard extends Vue {
+export default class FilterHourFormItem extends Vue {
   @Prop() entries;
   @Prop() project;
 

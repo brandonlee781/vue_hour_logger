@@ -9,7 +9,7 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 
 @Component
-export default class NavBar extends Vue {
+export default class TheTopNav extends Vue {
   expandSideBar() {
     this.$emit('expandSideBar');
   }
@@ -37,5 +37,10 @@ export default class NavBar extends Vue {
     margin: 0;
     border-right: 2px solid #ddd;
     color: #777;
+  }
+  @media print {
+    .bran-toolbar {
+      display: none;
+    }
   }
 </style>

@@ -1,35 +1,49 @@
 <template>
   <v-layout class="entry-list" column nowrap justify-center>
-    <log-entry :log="newEntry" :actions="actions" @newEntry="resetNewEntry()"></log-entry>
+    <log-entry-item :log="newEntry" :actions="actions" @newEntry="resetNewEntry()"></log-entry-item>
+    
     <v-divider light inset></v-divider>
+
+    <img v-if="isLogLoading" src="../../assets/Double Ring.svg" alt="Loading">
+
     <div v-for="(log, index) in logs" :key="log._id">
-      <log-entry :log="log" :actions="actions"></log-entry>
+      <log-entry-item :log="log" :actions="actions"></log-entry-item>
       <v-divider light inset></v-divider>
     </div>
-    <v-btn color="primary" full-width @click="getMoreEntries()">Load More</v-btn>
+
+    <v-btn v-if="!isLogLoading" color="primary" full-width @click="getMoreEntries()">Load More</v-btn>
   </v-layout>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { Component, Provide } from 'vue-property-decorator';
-import { mapGetters } from 'vuex';
 import * as moment from 'moment';
 import { ILog } from '../../interfaces/log';
 
 import * as logs from '../../store/log';
 
-@Component
+import LogEntryItem from './LogEntryItem';
+
+@Component({
+  components: {
+    'log-entry-item': LogEntryItem,
+  }
+})
 export default class LogEntryList extends Vue {
-  @Provide() newEntry: ILog = { date: moment().format('MM/DD/YYYY'), startTime: '', endTime: '', duration: 0, project: '', note: ''};
+  newEntry: ILog = { date: moment().format('MM/DD/YYYY'), startTime: '', endTime: '', duration: 0, project: '', note: ''};
   currentSkip: number = 20;
 
   get logs() {
-    return this.$store.getters['log/getLogs'];
+    return this.$store.getters['log/getLogs'].slice(0, this.currentSkip);
   }
 
   get logCount() {
     return this.$store.getters['log/getLogCount'];
+  }
+
+  get isLogLoading() {
+    return this.$store.state.log['isLoading'];
   }
 
   get actions(): any {
@@ -45,7 +59,7 @@ export default class LogEntryList extends Vue {
   }
 
   getMoreEntries() {
-    this.$store.dispatch('log/LOAD_MORE_LOGS', this.$store.getters['log/getLogCount']);
+    this.currentSkip += 20;
   }
 }
 

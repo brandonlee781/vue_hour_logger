@@ -39,17 +39,16 @@
           <v-date-picker v-model="toDate" no-title scrollable autosave></v-date-picker>
         </v-menu>
       </v-flex>
-      <!-- <v-flex> -->
-        <v-btn class="get-button" color="primary" @click="getEntries()">Get Project Totals</v-btn>
-      <!-- </v-flex> -->
+
+      <v-btn class="get-button" color="primary" @click="filterEntries()">Get Project Totals</v-btn>
     </v-layout>
 
     <v-layout row wrap>
-      <project-hours v-for="(entries, key) in projects" :key="key" :project="key" :entries="entries"></project-hours>
+      <filter-hour-item v-for="(entries, key) in projects" :key="key" :project="key" :entries="entries"></filter-hour-item>
     </v-layout>
     
-    <v-layout row nowrap justify-end align-end class="buttons" v-if="logs.length > 0">
-      <v-btn flat v-if="logs.length > 0" class="clear-button" color="secondary" @click="clearEntries()">Clear Entries</v-btn>
+    <v-layout row nowrap justify-end align-end class="buttons" v-if="filtered.length > 0">
+      <v-btn flat class="clear-button" color="secondary" @click="clearEntries()">Clear Entries</v-btn>
       <v-btn outline color="primary" class="csv-button" @click="downloadCSV()">Download CSV</v-btn>
       <v-btn color="primary" class="pdf-button" @click="downloadPDF()">Create Invoice</v-btn>
     </v-layout>
@@ -61,40 +60,30 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import * as moment from 'moment';
 import { ILog } from '../../interfaces/log';
-import { IAuthCookie } from '../../interfaces/authCookie';
-import axios, { AxiosInstance } from 'axios';
 import * as jsonexport from 'jsonexport/dist';
 import * as Cookies from 'js-cookie';
+import FilterHourFormItem from './FilterHourFormItem';
 
-@Component
-export default class HourTotalsSearch extends Vue {
-  private api: AxiosInstance;
+@Component({
+  components: {
+    'filter-hour-item': FilterHourFormItem
+  }
+})
+export default class FilterHourForm extends Vue {
   public fromDate: Date | null = null;
   public toDate: Date | null = null;
-  public logs: ILog[] = [];
+  public filtered: ILog[] = [];
   public projects: ILog[] = [];
-  public authCookie: IAuthCookie;
 
-  constructor() {
-    super();
-    this.authCookie = JSON.parse(Cookies.get('hourLoggerAuth'));
-    this.api = axios.create({
-      baseURL: 'https://www.branlee.me/api/v1',
-      headers: { 'Authorization': 'Basic ' + this.authCookie.code }
-    })
-  }
-
-  public getEntries() {
-    if (this.fromDate || this.toDate) {
-      const params = {params: { fromDate: this.fromDate, toDate: this.toDate }};
-      this.api.get('/logs', params)
-        .then(res => {
-          this.logs = res.data;
-          this.projects = this.groupBy(res.data, 'project');
-        })
-        .catch(err => {
-          console.error(err);
-        })
+  public filterEntries() {
+    if (this.fromDate) {
+      const logs = this.$store.getters['log/getLogs'];
+      this.filtered = logs.filter((log) => {
+        if ( moment(log.date, 'MM/DD/YYYY').isBetween(this.fromDate, this.toDate || moment()) ) {
+          return log;
+        }
+      });
+      this.projects = this.groupBy(this.filtered, 'project');
     }
   }
 
@@ -102,11 +91,11 @@ export default class HourTotalsSearch extends Vue {
     this.fromDate = null;
     this.toDate = null;
     this.projects = [];
-    this.logs = [];
+    this.filtered = [];
   }
 
   public downloadCSV() {
-    const formattedLogs = this.logs.map((log, ind) => {
+    const formattedLogs = this.filtered.map((log, ind) => {
       return {
         date: moment(log.date).format('MM/DD/YYYY'),
         'start time': moment(log.startTime, 'HH:mm:ss').format('HH:mm'),
