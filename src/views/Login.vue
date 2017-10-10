@@ -32,7 +32,7 @@ export default class Login extends Vue {
     if (accessCode) {
       this.api.get('/login', {
         params: {
-          accessCode: accessCode
+          accessCode
         }
       })
       .then(res => {

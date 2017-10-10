@@ -3,11 +3,13 @@
     <v-card-title>
       <p class="project-hours-title">{{ project }} - {{ totalHours }} hours</p>
     </v-card-title>
-    <v-layout class="card-body" column justify-start align-start>
-      <p class="card-text" v-for="(entry, index) in descEntries" :key="index">
-        {{ entry.date | date }} - {{ entry.startTime | time }} - {{ entry.endTime | time }} - {{ entry.duration }} hours 
-      </p>
-    </v-layout>
+    <v-card-text>
+      <v-layout column justify-start align-start>
+        <p class="card-text" v-for="(entry, index) in descEntries" :key="index">
+          {{ entry.date | date }} - {{ entry.startTime | time }} - {{ entry.endTime | time }} - {{ entry.duration }} hours 
+        </p>
+      </v-layout>
+    </v-card-text>
   </v-card>
 </template>
 
@@ -51,6 +53,8 @@ export default class FilterHourFormItem extends Vue {
   .project-card {
     width: calc(50% - 8px);
     margin: 4px;
+    max-height: 450px;
+    overflow-y: scroll;
   }
   .card-body {
     padding: 0 16px;

@@ -1,14 +1,14 @@
 <template>
-  <v-layout class="entry-list" column nowrap justify-center>
-    <log-entry-item :log="newEntry" :actions="actions" @newEntry="resetNewEntry()"></log-entry-item>
-    
-    <v-divider light inset></v-divider>
+  <v-layout class="entry-list" column nowrap>
+    <v-layout row nowrap align-end class="entry-list-header">
+      <span class="entry-list-title">{{ selectedItem.title }}</span>
+      <log-entry-new :selectedItem="selectedItem"></log-entry-new>
+    </v-layout>
 
     <img v-if="isLogLoading" src="../../assets/Double Ring.svg" alt="Loading">
 
     <div v-for="(log, index) in logs" :key="log._id">
       <log-entry-item :log="log" :actions="actions"></log-entry-item>
-      <v-divider light inset></v-divider>
     </div>
 
     <v-btn v-if="!isLogLoading" color="primary" full-width @click="getMoreEntries()">Load More</v-btn>
@@ -17,25 +17,32 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { Component, Provide } from 'vue-property-decorator';
+import { Component, Prop } from 'vue-property-decorator';
 import * as moment from 'moment';
 import { ILog } from '../../interfaces/log';
 
 import * as logs from '../../store/log';
 
-import LogEntryItem from './LogEntryItem';
+import LogEntryListItem from './LogEntryListItem.vue';
+import LogEntryListNew from './LogEntryListNew.vue';
 
 @Component({
   components: {
-    'log-entry-item': LogEntryItem,
+    'log-entry-item': LogEntryListItem,
+    'log-entry-new': LogEntryListNew,
   }
 })
 export default class LogEntryList extends Vue {
+  @Prop() selectedItem;
   newEntry: ILog = { date: moment().format('MM/DD/YYYY'), startTime: '', endTime: '', duration: 0, project: '', note: ''};
   currentSkip: number = 20;
 
   get logs() {
-    return this.$store.getters['log/getLogs'].slice(0, this.currentSkip);
+    if (this.selectedItem.id === 'recent' ) {
+      return this.$store.getters['log/getLogs'].slice(0, this.currentSkip);
+    } else {
+      return this.$store.getters['log/getLogsByProject'](this.selectedItem.id);
+    }
   }
 
   get logCount() {
@@ -62,12 +69,29 @@ export default class LogEntryList extends Vue {
     this.currentSkip += 20;
   }
 }
-
 </script>
 
 <style lang="scss" scoped>
 .entry-list {
-  margin-top: 20px;
+  width: 100%;
+}
+.entry-list-header {
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 9em;
+  padding: 0 4em;
+  border-bottom: 1px solid rgba(0,0,0,0.12);
+  & .entry-list-title {
+    font-size: 2.5rem;
+    font-weight: 300;
+  }
+  & .entry-list-new {
+    color: #000 !important;
+    font-size: 5em;
+    font-weight: 100;
+  }
 }
 .add-button,
 .remove-button {

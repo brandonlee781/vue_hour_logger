@@ -7,70 +7,66 @@ import Cookies from 'js-cookie';
 import * as types from '../mutation-types';
 
 import { State as RootState } from '../state';
-import { LogState, Log } from './logState';
+import { ProjectState, Project } from './projectState';
 import { IAuthCookie } from '../../interfaces/authCookie';
 
 const api = axios.create({
-  baseURL: 'https://www.branlee.me/api/v1/logs',
+  baseURL: 'https://www.branlee.me/api/v1/projects',
 })
 const authCookie = (): IAuthCookie => JSON.parse(Cookies.get('hourLoggerAuth'));
 
-export const log = {
+export const project = {
   namespaced: true,
   state: {
     isLoading: false,
-    logs: []
+    projects: []
   },
   getters: {
-    getLogs(state: LogState): Log[] {
-      return state.logs.map(log => log);
+    getProjects(state: ProjectState): Project[] {
+      return state.projects.map(project => project);
     },
-    getLogCount(state: LogState): number {
-      return state.logs.length;
+    getProjectCount(state: ProjectState): number {
+      return state.projects.length;
     },
-    getLogsByProject(state: LogState) {
-      return projectName => state.logs.filter((log) => {
-        return log.project.toLowerCase() === projectName.toLowerCase();
-      });
-    }
   },
   mutations: {
-    [types.SET_LIST](state, { logs }) {
-      state.logs = logs;
+    [types.SET_LIST](state, { projects }) {
+      state.projects = projects;
     },
-    [types.PREPEND](state, { log }) {
-      state.logs.unshift(log);
+    [types.PREPEND](state, { project }) {
+      state.projects.unshift(project);
     },
-    [types.ADD](state, { logs }) {
-      state.logs.push(...logs);
+    [types.ADD](state, { projects }) {
+      state.projects.push(...projects);
     },
-    [types.REMOVE](state, { log }) {
-      const index = state.logs.findIndex(l => l._id === log._id);
-      state.logs.splice(index, 1);
+    [types.REMOVE](state, { project }) {
+      const index = state.projects.findIndex(l => l._id === project._id);
+      state.projects.splice(index, 1);
     },
-    [types.UPDATE](state, { log }) {
-      const index = state.logs.findIndex(l => l._id === log._id);
-      state.logs.splice(index, 1, log);
+    [types.UPDATE](state, { project }) {
+      const index = state.projects.findIndex(l => l._id === project._id);
+      state.projects.splice(index, 1, project);
     },
     'TOGGLE_IS_LOADING'(state) {
       state.isLoading = !state.isLoading;
     }
   },
   actions: {
-    LOAD_LOG_LIST: async ({ commit }) => {
+    LOAD_PROJECT_LIST: async ({ commit }) => {
       commit('TOGGLE_IS_LOADING');
       const res = await api.get('/', { headers: { 'Authorization': 'Basic ' + authCookie().code } });
-      commit('SET_LIST', { logs: res.data });
+      commit('SET_LIST', { projects: res.data });
       commit('TOGGLE_IS_LOADING');
     },
     LOAD_MORE_LOGS: async ({ commit }, count) => {
       const res = await api.get('/', { params: { skip: count }, headers: { 'Authorization': 'Basic ' + authCookie().code } });
       commit('APPEND', { logs: res.data })
     },
-    ADD_NEW_LOG: async ({ commit }, log) => {
+    ADD_NEW_PROJECT: async ({ commit }, project) => {
       try {
-        const res = await api.post('/', log, { headers: { 'Authorization': 'Basic ' + authCookie().code } });
-        commit('PREPEND', { log: res.data });
+        console.log(project);
+        const res = await api.post('/', project, { headers: { 'Authorization': 'Basic ' + authCookie().code } });
+        commit('PREPEND', { project: res.data });
         return Promise.resolve('finished');
       } catch (err) {
         console.error(err);

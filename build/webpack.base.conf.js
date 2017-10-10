@@ -28,6 +28,16 @@ module.exports = {
   module: {
     rules: [
       {
+        enforce: 'pre',
+        test: /\.ts$/,
+        loader: 'tslint-loader',
+        exclude: /(node_modules)/,
+        options: {
+            configFile: 'tslint.json',
+            tsConfigFile: 'tsconfig.json'
+        }
+      },
+      {
         test: /\.ts$/,
         exclude: /node_modules|vue\/src/,
         loader: "ts-loader",
@@ -38,13 +48,23 @@ module.exports = {
       {
         test: /\.vue$/,
         loader: 'vue-loader',
-        options: vueLoaderConfig
+        options: Object.assign(vueLoaderConfig, { loaders: { ts: 'ts-loader!tslint-loader' }})
       },
       {
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: /node_modules/,
         include: [resolve('src'), resolve('test')],
+      },
+      {
+        test: /\.styl$/,
+        use: [{
+          loader: 'style-loader'
+        }, {
+          loader: 'css-loader'
+        }, {
+          loader: 'stylus-loader'
+        }] 
       },
       {
         test: /\.(scss|sass)$/,

@@ -38,9 +38,9 @@ export default new Router({
       }
     },
     {
-      path: '/project',
+      path: '/projects',
       name: 'Project',
-      component: Invoice,
+      component: Project,
       beforeEnter(to, from, next) {
         const authCookie = Cookies.get('hourLoggerAuth');
         if (!authCookie) {
