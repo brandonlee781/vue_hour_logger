@@ -6,7 +6,7 @@
       </div>
     </app-side-bar>
     <div class="invoice-body">
-      <invoice-body></invoice-body>
+      <invoice-body :savedInvoice="links[selectedIndex]"></invoice-body>
     </div>
   </v-layout>
 </template>
@@ -28,10 +28,28 @@ import InvoiceBody from '@/components/Invoice/InvoiceBody.vue';
 export default class Invoice extends Vue {
   @Prop() expanded: boolean;
   selectedIndex: number = 0;
-  links = [];
+  fab = false;
 
-  selectedItem() {
+  get links() {
+    const projects =  this.$store.getters['invoice/getInvoices'];
+    const firstEl = {
+      icon: '',
+      title: 'Create New Invoice',
+      id: 'new'
+    };
 
+    return [firstEl, ...projects.map((p) => {
+      return {
+        icon: 'receipt',
+        title: 'Invoice #' + p.number + ' - ' + p.date,
+        id: p.number,
+        logs: p.logs
+      }
+    })]
+  }
+  selectedItem(val) {
+    const ind = this.links.findIndex(link => link.id === val.id );
+    this.selectedIndex = ind;
   }
 
 }

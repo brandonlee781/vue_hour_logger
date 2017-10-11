@@ -1,14 +1,10 @@
 <template>
   <div class="invoice-data-table">
-    <!-- <v-layout row nowrap justify-end align-end class="table-buttons" v-if="filtered.length > 0">
-      <v-btn outline class="clear-button" color="secondary" @click="clearEntries()">Clear Entries</v-btn>
-      <v-btn color="primary" class="csv-button" @click="downloadCSV()">Download CSV</v-btn>
-    </v-layout> -->
-
     <v-data-table
       :headers="headers"
       :items="filtered"
       :pagination.sync="sort"
+      hide-actions
       class="elevation-1"
     >
       <template slot="items" scope="props">
@@ -31,14 +27,15 @@
 import Vue from 'vue';
 import { Component, Prop } from 'vue-property-decorator';
 import moment from 'moment';
-import * as jsonexport from 'jsonexport/dist';
 import { Log } from '../../store/log/';
+import { Project } from '../../store/project/';
 
 @Component
 export default class InvoiceBodyDataTable extends Vue {
   @Prop() filtered: Log[];
-  @Prop() projects;
+  @Prop() projects: Project[];
   @Prop() currentFilter;
+
   headers = [
     { text: 'Project', value: 'project'},
     { text: 'Date', value: 'date'},
@@ -49,43 +46,7 @@ export default class InvoiceBodyDataTable extends Vue {
   sort = {
     sortBy: 'date',
     descending: true,
-    rowsPerPage: 25
-  }
-
-  clearEntries() {
-
-  }
-
-  public downloadCSV() {
-    const formattedLogs = this.filtered.map((log, ind) => {
-      return {
-        date: moment(log.date).format('MM/DD/YYYY'),
-        'start time': moment(log.startTime, 'HH:mm:ss').format('HH:mm'),
-        'end time': moment(log.endTime, 'HH:mm:ss').format('HH:mm'),
-        'project': log.project,
-        'total hours': log.duration,
-        'notes': log.note
-      }
-    })
-
-
-    jsonexport(formattedLogs, (err, csv) => {
-      if (err) console.error(err);
-      const filename = this.currentFilter.endDate ? 
-        moment(this.currentFilter.endDate).format('MMMDD') + '_hours.csv' : 
-        moment().format('MMMDD') + '_hours.csv';
-
-      const element = document.createElement('a');
-      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(csv));
-      element.setAttribute('download', filename);
-
-      element.style.display = 'none';
-      document.body.appendChild(element);
-
-      element.click();
-
-      document.body.removeChild(element);
-    })
+    rowsPerPage: 100
   }
 }
 </script>

@@ -33,6 +33,7 @@ export default class App extends Vue {
   mounted() {
     this.$store.dispatch('log/LOAD_LOG_LIST');
     this.$store.dispatch('project/LOAD_PROJECT_LIST');
+    this.$store.dispatch('invoice/LOAD_INVOICE_LIST');
   }
 }
 </script>

@@ -70,13 +70,10 @@ import moment from 'moment';
 @Component
 export default class Invoice extends Vue {
   @Prop() projects;
+  @Prop() invoiceNumber: number;
 
   get today() {
     return moment().format('M/DD/YYYY');
-  }
-  get invoiceNumber() {
-    const startDate = moment('06/15/2017', 'MM/DD/YYYY');
-    return moment().diff(startDate, 'weeks');
   }
   get invoiceTotal() {
     let logs = []; // tslint:disable-line
