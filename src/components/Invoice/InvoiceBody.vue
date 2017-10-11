@@ -13,7 +13,12 @@
       ></invoice-data-table>
       <div class="invoice-wrapper">
         <div class="invoice-template elevation-1">
-          <invoice-template :projects="projects" :invoiceNumber="invoiceNumber"></invoice-template>
+          <invoice-template 
+            :projects="projects" 
+            :invoiceNumber="invoiceNumber" 
+            :currentFilter="currentFilter"
+            :currentRate="currentRate"
+          ></invoice-template>
         </div>
       </div>
     </div>
@@ -138,7 +143,7 @@ export default class InvoiceBody extends Vue {
   
   public saveInvoice() {
     this.$store.dispatch('invoice/ADD_NEW_INVOICE', {
-      number: 1,
+      number: this.invoiceNumber,
       date: moment(this.currentFilter.endDate).format('MM/DD/YYYY') || moment().format('MM/DD/YYYY'),
       logs: this.filtered,
       total: this.invoiceTotal()

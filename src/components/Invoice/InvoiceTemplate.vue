@@ -12,7 +12,7 @@
       <div class="info-wrapper">
         <h3>INVOICE</h3>
         <div class="info-box">
-          <div class="date">DATE: {{ today }}</div>
+          <div class="date">DATE: {{ currentFilter.endDate | date }}</div>
           <div class="number"><span>INVOICE #</span><span>{{ invoiceNumber }}</span></div>
           <div class="customer">
             <div>
@@ -39,8 +39,8 @@
           <tr v-for="(project, key) in projects" :key="key">
             <td class="project-name">{{ key }}</td>
             <td>{{ project.reduce((acc, cur) => { return acc + cur.duration; }, 0) }}</td>
-            <td class="unit-price">$25</td>
-            <td class="amount">{{ '$' + ((project.reduce((acc, cur) => { return acc + cur.duration; }, 0)) * 25).toFixed(2) }}</td>
+            <td class="unit-price">${{ currentRate }}</td>
+            <td class="amount">{{ '$' + ((project.reduce((acc, cur) => { return acc + cur.duration; }, 0)) * currentRate).toFixed(2) }}</td>
           </tr>
         </tbody>
       </table>
@@ -71,6 +71,8 @@ import moment from 'moment';
 export default class Invoice extends Vue {
   @Prop() projects;
   @Prop() invoiceNumber: number;
+  @Prop() currentFilter;
+  @Prop() currentRate;
 
   get today() {
     return moment().format('M/DD/YYYY');
@@ -84,7 +86,7 @@ export default class Invoice extends Vue {
       })
     });
     const hours = logs.reduce( (acc, cur) => { return acc + cur.duration; }, 0 )
-    return hours * 25;
+    return hours * this.currentRate;
   }
 }
 </script>
