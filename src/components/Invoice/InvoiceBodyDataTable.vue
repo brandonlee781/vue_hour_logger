@@ -55,4 +55,9 @@ export default class InvoiceBodyDataTable extends Vue {
   .invoice-data-table {
     width: 50%;
   }
+  @media print {
+    .invoice-data-table {
+      display: none;
+    }
+  }
 </style>
